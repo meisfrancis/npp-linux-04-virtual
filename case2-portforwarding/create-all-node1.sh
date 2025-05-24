@@ -62,20 +62,20 @@ ip netns exec ns2 ip route add default via 11.11.11.2 dev vethD
 
 
 
-echo "For ingress (if port 80) - from eth1 port 80 (web) destination NAT (192.168.56.100 to 10.10.10.1)"
-iptables -t nat -A PREROUTING -i eth1 -d 192.168.56.100 -p tcp --dport 80 -j DNAT --to-destination 10.10.10.1
+echo "For ingress (if port 80) - from enp0s9 port 80 (web) destination NAT (192.168.56.100 to 10.10.10.1)"
+iptables -t nat -A PREROUTING -i enp0s9 -d 192.168.56.100 -p tcp --dport 80 -j DNAT --to-destination 10.10.10.1
 
-echo "For ingress (if port 80) - from eth1 port 25565 (minecraft) destination NAT (192.168.56.100 to 11.11.11.1)"
-iptables -t nat -A PREROUTING -i eth1 -d 192.168.56.100 -p tcp --dport 25565 -j DNAT --to-destination 11.11.11.1
+echo "For ingress (if port 80) - from enp0s9 port 25565 (minecraft) destination NAT (192.168.56.100 to 11.11.11.1)"
+iptables -t nat -A PREROUTING -i enp0s9 -d 192.168.56.100 -p tcp --dport 25565 -j DNAT --to-destination 11.11.11.1
 
 #sudo iptables -t nat -L -v -n
 
 
 echo "For egress - from vethA source NAT (10.10.10.1 to 192.168.56.100)"
-iptables -t nat -A POSTROUTING -o eth1 -s 10.10.10.1 -p tcp --sport 80 -j SNAT --to-source 192.168.56.100
+iptables -t nat -A POSTROUTING -o enp0s9 -s 10.10.10.1 -p tcp --sport 80 -j SNAT --to-source 192.168.56.100
 
 echo "For egress - from vethC source NAT (11.11.11.1 to 192.168.56.100)"
-iptables -t nat -A POSTROUTING -o eth1 -s 11.11.11.1 -p tcp --sport 25565 -j SNAT --to-source 192.168.56.100
+iptables -t nat -A POSTROUTING -o enp0s9 -s 11.11.11.1 -p tcp --sport 25565 -j SNAT --to-source 192.168.56.100
 
 #sudo iptables -t nat -L -v -n
    # for table nat, list, verbose, and numbers
@@ -105,7 +105,7 @@ EOF
 # Suggested debug:
 #   start the server in ns1, and run nc on node2 for port 80
 #   tshark -i <interface>
-#     Start with eth1 (sudo tshark -i eth1)
+#     Start with enp0s9 (sudo tshark -i enp0s9)
 #     then do vethA (sudo tshark -i vethA), 
 #     then inside ns1 (sudo ip netns exec ns1 tshark -i vethB)
 #     You'll need to re-run the nc command on node2 each time you start tshark
